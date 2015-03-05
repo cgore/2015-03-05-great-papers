@@ -1,0 +1,227 @@
+% Copyright (c) 2015, Christopher Mark Gore,
+% Soli Deo Gloria,
+% All rights reserved.
+%
+% 2317 South River Road, Saint Charles, Missouri 63303 USA.
+% Web: http://cgore.com
+% Email: cgore@cgore.com
+%
+% Redistribution and use in source and binary forms, with or without
+% modification, are permitted provided that the following conditions are met:
+%
+%     * Redistributions of source code must retain the above copyright
+%       notice, this list of conditions and the following disclaimer.
+%
+%     * Redistributions in binary form must reproduce the above copyright
+%       notice, this list of conditions and the following disclaimer in the
+%       documentation and/or other materials provided with the distribution.
+%
+%     * Neither the name of Christopher Mark Gore nor the names of other
+%       contributors may be used to endorse or promote products derived from
+%       this software without specific prior written permission.
+%
+% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+% AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+% IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+% ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+% LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+% CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+% SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+% INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+% CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+% ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+% POSSIBILITY OF SUCH DAMAGE.
+
+\documentclass{seminar}
+
+\usepackage{fixltx2e} % Bugfixes for LaTeX 2e
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[normalem]{ulem}
+\usepackage{graphicx}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{librebaskerville} % Baskerville font
+\usepackage{amsfonts}
+\usepackage{listings}
+\usepackage[dvips]{pstricks}
+\usepackage{relsize}
+\usepackage{textcomp}
+\usepackage[normalem]{ulem}
+\usepackage{wasysym}
+
+
+\usepackage{semcolor,slidesec}
+\input{seminar.bug}
+\input{seminar.bg2}
+% \input{seminar.bg3} % TODO: why is this missing on OSX?
+
+\definecolor{fillcolor}{rgb}{0.9,0.95,1.0}
+\definecolor{linecolor}{rgb}{0.8,0.85,0.9}
+\slideframe[\psset{fillcolor=fillcolor,linecolor=linecolor}]{scshadow}
+
+\newcommand{\hc}{Blue}
+\newcommand{\h}[1]{\slideheading{\textcolor{\hc}{#1}}}
+\newcommand{\tq}[1]{\textcolor{Green}{\textbf{#1}}}
+\newcommand{\tbd}[1]{\textcolor{Blue}{\textit{#1}}}
+\newcommand{\TODO}{{\Huge \textcolor{Red}{\textbf{{TO DO}}}}}
+
+\definecolor{commentcolor}{rgb}{0.1,0.1,0.8}
+\definecolor{identifiercolor}{rgb}{0.2,0.2,0.2}
+\definecolor{keywordcolor}{rgb}{0.1,0.3,0.1}
+\definecolor{cexcolor}{rgb}{0.25,0.25,0.4}
+\lstset{
+  basicstyle=\small\ttfamily,
+  language=Ruby,
+  morekeywords={make-instance},
+  escapeinside={\%*}{*)},
+  commentstyle=\itshape\color{commentcolor},
+  identifierstyle=\color{identifiercolor},
+  keywordstyle=\color{keywordcolor},
+  upquote=true
+}
+\newcommand{\cex}[1]{\textcolor{cexcolor}{\textit{#1}}}
+
+\newcommand{\fullSlideImage}[1]{
+  \begin{center}
+    \includegraphics[width=4in,height=2.5in,keepaspectratio=true]{#1}
+  \end{center}
+}
+
+\title{\psshadowbox{An Axiomatic Basis for Computer Programming}}
+\author{Christopher Mark Gore\\
+  \texttt{cgore.com}}
+\date{Thursday, March 5, {\smaller AD} 2015} % textsc doesn't seem to work for Baskerville.
+
+\begin{document}
+
+\raggedslides[0mm]
+
+
+\begin{slide}
+  \color{\hc}
+
+  \begin{center}
+    \includegraphics[height=1.25in]{lambda-sticker-blue.eps}
+  \end{center}
+
+  \maketitle
+
+  \color{Black}
+\end{slide}
+
+
+\begin{slide}
+  \h{Sir Charles Antony Richard Hoare FRS FREng}
+
+  \fullSlideImage{Sir_Tony_Hoare_IMG_5125.eps}
+
+  \textit{You can call me Tony!}
+\end{slide}
+
+\begin{slide}
+  \h{He's Really Smart!}
+
+  \begin{itemize}
+    \item Quick Sort (a.k.a. the only good sort),
+    \item Quick Select (a.k.a. the only good select),
+    \item Hoare Logic (this paper is its beginnings),
+    \item CSP (Communicating Sequential Processes): formalized message passing,
+    \item Null references \textit{(or is that actually a bad thing?)}
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \h{Programming is Logic!}
+
+  If we control the inputs, the outputs of a function should be the same,
+  \textbf{always}.  It is \textbf{completely reproducable}.
+\end{slide}
+
+\begin{slide}
+  \h{Ignore the Arithmetic}
+
+  He talks a lot about basic arithmetic: feel free to ignore it, he's really
+  just using it as a set of examples \textit{(unless you are actually interested
+  in the basic logical foundations of arithmetic.)}
+\end{slide}
+
+\begin{slide}
+  \h{Program Execution: Preconditions and Postconditions}
+
+  We can determine a lot of the validity of a program $Q$ by specifying some
+  preconditions $P$ and some postconditions $R$.
+
+  $$ P \{ Q \} R $$
+
+  If you specify enough preconditions and postconditions to be both
+  \textit{necessary} and \textit{sufficient}, you have ``proven'' your program
+  as correct.
+
+  \textit{Preconditions \textellipsis \{ Our Program \textellipsis \} Postconditions \textellipsis}
+  
+\end{slide}
+
+\begin{slide}
+  \h{Axiom of Assignment}
+  
+  Let's say we want to assign $x := f$.
+  If we can assert $P(x)$ to be true after the assignment, then we must also be
+  able to say $P(f)$ before the assignment.
+
+  $$ \vdash P_0 \{ x := f \} P $$
+
+  We get $P_0$ by substituting $f$ for $x$ everywhere in $P$.
+
+\end{slide}
+
+\begin{slide}
+  \h{Rules of Consequence}
+
+  If $\vdash P \{ Q \} R$ and $\vdash R \supset S$ then $\vdash P \{ Q \} S$.
+
+  If $\vdash P \{ Q \} R$ and $\vdash S \supset P$ then $\vdash S \{ Q \} R$.
+
+  This means we can make more general preconditions and postconditions, and they
+  must also hold.
+
+  \textbf{Example:}  If our output should be a positive integer, we can assert
+  that it is just an integer.
+
+\end{slide}
+
+\begin{slide}
+  \h{Rule of Composition}
+
+  If $\vdash P \{ Q_1 \} R_1$ and $\vdash R_1 \{ Q_2 \} R$ then
+  $\vdash P \{ (Q_1; Q_2) \} R$.
+
+  This means we can chain together our statements and still make proofs!
+\end{slide}
+
+\begin{slide}
+  \h{Rule of Iteration}
+
+  If $\vdash P \land B \{ S \} P$ then
+  $\vdash P \{ \texttt{while\ } B \texttt{ do } S \} \lnot B \land P$.
+
+  At the end of the while loop, the conditional $B$ is no longer true.
+\end{slide}
+
+\begin{slide}
+  \h{Reservations and Limitations}
+
+  \begin{itemize}
+    \item No side effects in the proof!
+    \item No infinite loops!
+    \item Only makes sense if you can rigorously assert things.
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \begin{center}
+    \textcolor{\hc}{\textbf{\emph{\Huge{Questions?}}}}
+  \end{center}
+\end{slide}
+
+\end{document}
